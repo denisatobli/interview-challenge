@@ -22,9 +22,10 @@ public class CarDTOTest {
                 .status(AVAILABLE)
                 .lastUpdatedAt(LocalDateTime.now())
                 .build();
-
+        // when
         var carDTO = CarDTO.fromEntity(carEntity);
 
+        // then
         then(carDTO.getId()).isEqualTo(carEntity.getId());
         then(carDTO.getLicensePlate()).isEqualTo(carEntity.getLicensePlate());
         then(carDTO.getBrand()).isEqualTo(carEntity.getBrand());
@@ -45,8 +46,10 @@ public class CarDTOTest {
                 IN_MAINTENANCE
         );
 
+        // when
         var carEntity = dto.toEntity();
 
+        // then
         then(carEntity.getId()).isEqualTo(dto.getId());
         then(carEntity.getLicensePlate()).isEqualTo(dto.getLicensePlate());
         then(carEntity.getBrand()).isEqualTo(dto.getBrand());

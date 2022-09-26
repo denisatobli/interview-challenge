@@ -130,7 +130,7 @@ public class CarControllerIntegrationTest {
         givenBmwCar();
 
         // when
-        whenCarIsDeleted(carDTO.getId());
+        whenCarIsDeleted();
 
         // then
         resultActions.andExpect(status().isNoContent());
@@ -139,7 +139,7 @@ public class CarControllerIntegrationTest {
 
     @Test
     @SneakyThrows
-    public void should_update_car_an_existing_car() {
+    public void should_update_an_existing_car() {
         // given
         givenBmwCar();
         var updatedCarRequest = givenUpdatedCarDTO();
@@ -151,7 +151,7 @@ public class CarControllerIntegrationTest {
         // then
         resultActions.andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
-                .andExpect(jsonPath("id").value(updatedCarRequest.getId()))
+                .andExpect(jsonPath("id").isNotEmpty())
                 .andExpect(jsonPath("brand").value(updatedCarRequest.getBrand()))
                 .andExpect(jsonPath("licensePlate").value(updatedCarRequest.getLicensePlate()))
                 .andExpect(jsonPath("manufacturer").value(updatedCarRequest.getManufacturer()))
@@ -159,27 +159,58 @@ public class CarControllerIntegrationTest {
                 .andExpect(jsonPath("status").value(updatedCarRequest.getStatus().name()));
     }
 
+    @Test
+    @SneakyThrows
+    public void should_fail_to_update_car_with_an_existing_license_plate() {
+        // given
+        var existingCar = givenMercedesCar();
+        givenBmwCar();
+        var updateCarRequest = givenUpdatedCarDTO();
+        updateCarRequest.setLicensePlate(existingCar.getLicensePlate());
+        payload = toJSON(updateCarRequest);
+
+        // when
+        whenACarIsUpdated();
+
+        // then
+        resultActions.andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("errorId").value("license-id-already-taken"));
+    }
+
     private void givenBmwCar() {
-        carDTO = carService.createCar(new CarDTO(
-                1L,
-                "L-CS8877E",
-                "MBW",
-                "BMW",
-                "Hamburg",
-                IN_MAINTENANCE
-        ));
+        carDTO = carService.createCar(
+                CarDTO.builder()
+                        .licensePlate("L-CS8877E")
+                        .brand("MBW")
+                        .manufacturer("MBW")
+                        .operationCity("Hamburg")
+                        .status(IN_MAINTENANCE)
+                        .build()
+        );
+    }
+
+    private CarDTO givenMercedesCar() {
+        return carService.createCar(
+                CarDTO.builder()
+                        .licensePlate("L-CS8877F")
+                        .brand("Mercedes")
+                        .manufacturer("MBW")
+                        .operationCity("Daimler Motors Corporation")
+                        .status(IN_MAINTENANCE)
+                        .build()
+        );
     }
 
     @SneakyThrows
     private void givenCarCreatePayload() {
-        carDTO = new CarDTO(
-                1L,
-                "L-CS8877E",
-                "Mercedes",
-                "Daimler Motors Corporation",
-                "Hamburg",
-                AVAILABLE
-        );
+        carDTO = CarDTO.builder()
+                .licensePlate("L-CS8877E")
+                .brand("Mercedes")
+                .manufacturer("Daimler Motors Corporation")
+                .operationCity("Hamburg")
+                .status(AVAILABLE)
+                .build();
 
         payload = toJSON(carDTO);
     }
@@ -217,9 +248,9 @@ public class CarControllerIntegrationTest {
     }
 
     @SneakyThrows
-    private void whenCarIsDeleted(Long id) {
+    private void whenCarIsDeleted() {
         resultActions = this.mockMvc
-                .perform(delete("/cars/{id}", id))
+                .perform(delete("/cars/{id}", carDTO.getId()))
                 .andDo(print());
     }
 
