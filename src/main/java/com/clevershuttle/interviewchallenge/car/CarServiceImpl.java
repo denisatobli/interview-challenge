@@ -4,17 +4,20 @@ import com.clevershuttle.interviewchallenge.exception.EntityNotFoundException;
 import com.clevershuttle.interviewchallenge.exception.LicensePlateExistException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class CarServiceImpl implements CarService{
 
     private final CarRepository carRepository;
 
+    @Transactional(readOnly = true)
     public List<CarDTO> findAllCars() {
         return carRepository.findAll()
                 .stream()
@@ -22,6 +25,7 @@ public class CarServiceImpl implements CarService{
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public CarDTO findCar(Long id) {
         return carRepository.findById(id)
                 .map(CarDTO::fromEntity)
