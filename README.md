@@ -1,5 +1,7 @@
 # Interview Challenge
 
+![Build pipeline](https://github.com/denisatobli/interview-challenge/actions/workflows/build-pipeline.yml/badge.svg)
+
 The goal of this application is to demonstrate CRUD operations for Car domain.
 
 ### Pre-requisites
