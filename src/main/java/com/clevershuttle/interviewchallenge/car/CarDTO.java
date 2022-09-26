@@ -1,36 +1,28 @@
 package com.clevershuttle.interviewchallenge.car;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 import static com.fasterxml.jackson.annotation.JsonProperty.Access.READ_ONLY;
 
-@Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class CarDTO {
+public record CarDTO(
+        @JsonProperty(access = READ_ONLY)
+        Long id,
+        @Size(min = 9, max = 9)
+        @NotBlank(message = "License plate can not be blank!")
+        String licensePlate,
 
-    @JsonProperty(access = READ_ONLY)
-    private Long id;
+        String brand,
 
-    @Size(min = 9, max = 9)
-    @NotBlank(message = "License plate can not be blank!")
-    private String licensePlate;
+        String manufacturer,
 
-    private String brand;
+        String operationCity,
 
-    private String manufacturer;
-
-    private String operationCity;
-
-    private Status status;
+        Status status
+) {
 
     public static CarDTO fromEntity(CarEntity carEntity) {
         return new CarDTO(

@@ -13,31 +13,31 @@ import static org.springframework.http.HttpStatus.NO_CONTENT;
 @RequestMapping("/cars")
 public class CarController {
 
-    private final CarServiceImpl carServiceImpl;
+    private final CarService carService;
 
     @GetMapping
     public List<CarDTO> getCars(){
-        return carServiceImpl.findAllCars();
+        return carService.findAllCars();
     }
 
     @GetMapping("/{id}")
     public CarDTO getCar(@PathVariable Long id){
-        return carServiceImpl.findCar(id);
+        return carService.findCar(id);
     }
 
     @PostMapping
     public CarDTO createCar(@Valid @RequestBody CarDTO carDTO){
-        return carServiceImpl.createCar(carDTO);
+        return carService.createCar(carDTO);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(NO_CONTENT)
     public void deleteCar(@PathVariable Long id){
-        carServiceImpl.deleteCar(id);
+        carService.deleteCar(id);
     }
 
     @PutMapping("/{id}")
     public CarDTO updateCar(@PathVariable Long id, @Valid @RequestBody CarDTO carDTO){
-        return carServiceImpl.updateCar(id, carDTO);
+        return carService.updateCar(id, carDTO);
     }
 }

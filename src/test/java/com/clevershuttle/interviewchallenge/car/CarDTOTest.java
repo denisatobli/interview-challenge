@@ -26,12 +26,12 @@ public class CarDTOTest {
         var carDTO = CarDTO.fromEntity(carEntity);
 
         // then
-        then(carDTO.getId()).isEqualTo(carEntity.getId());
-        then(carDTO.getLicensePlate()).isEqualTo(carEntity.getLicensePlate());
-        then(carDTO.getBrand()).isEqualTo(carEntity.getBrand());
-        then(carDTO.getManufacturer()).isEqualTo(carEntity.getManufacturer());
-        then(carDTO.getOperationCity()).isEqualTo(carEntity.getOperationCity());
-        then(carDTO.getStatus()).isEqualTo(carEntity.getStatus());
+        then(carDTO.id()).isEqualTo(carEntity.getId());
+        then(carDTO.licensePlate()).isEqualTo(carEntity.getLicensePlate());
+        then(carDTO.brand()).isEqualTo(carEntity.getBrand());
+        then(carDTO.manufacturer()).isEqualTo(carEntity.getManufacturer());
+        then(carDTO.operationCity()).isEqualTo(carEntity.getOperationCity());
+        then(carDTO.status()).isEqualTo(carEntity.getStatus());
     }
 
     @Test
@@ -50,12 +50,12 @@ public class CarDTOTest {
         var carEntity = dto.toEntity();
 
         // then
-        then(carEntity.getId()).isEqualTo(dto.getId());
-        then(carEntity.getLicensePlate()).isEqualTo(dto.getLicensePlate());
-        then(carEntity.getBrand()).isEqualTo(dto.getBrand());
-        then(carEntity.getManufacturer()).isEqualTo(dto.getManufacturer());
-        then(carEntity.getOperationCity()).isEqualTo(dto.getOperationCity());
-        then(carEntity.getStatus()).isEqualTo(dto.getStatus());
+        then(carEntity.getId()).isEqualTo(dto.id());
+        then(carEntity.getLicensePlate()).isEqualTo(dto.licensePlate());
+        then(carEntity.getBrand()).isEqualTo(dto.brand());
+        then(carEntity.getManufacturer()).isEqualTo(dto.manufacturer());
+        then(carEntity.getOperationCity()).isEqualTo(dto.operationCity());
+        then(carEntity.getStatus()).isEqualTo(dto.status());
         then(carEntity.getCreatedAt()).isNotNull();
         then(carEntity.getLastUpdatedAt()).isNull();
     }

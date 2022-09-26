@@ -58,12 +58,12 @@ public class CarControllerIntegrationTest {
         resultActions.andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$.[0].id").value(carDTO.getId()))
-                .andExpect(jsonPath("$.[0].brand").value(carDTO.getBrand()))
-                .andExpect(jsonPath("$.[0].licensePlate").value(carDTO.getLicensePlate()))
-                .andExpect(jsonPath("$.[0].manufacturer").value(carDTO.getManufacturer()))
-                .andExpect(jsonPath("$.[0].operationCity").value(carDTO.getOperationCity()))
-                .andExpect(jsonPath("$.[0].status").value(carDTO.getStatus().name()));
+                .andExpect(jsonPath("$.[0].id").value(carDTO.id()))
+                .andExpect(jsonPath("$.[0].brand").value(carDTO.brand()))
+                .andExpect(jsonPath("$.[0].licensePlate").value(carDTO.licensePlate()))
+                .andExpect(jsonPath("$.[0].manufacturer").value(carDTO.manufacturer()))
+                .andExpect(jsonPath("$.[0].operationCity").value(carDTO.operationCity()))
+                .andExpect(jsonPath("$.[0].status").value(carDTO.status().name()));
     }
 
     @Test
@@ -73,17 +73,17 @@ public class CarControllerIntegrationTest {
         givenBmwCar();
 
         // when
-        whenACarIsRetrieved(carDTO.getId());
+        whenACarIsRetrieved(carDTO.id());
 
         // then
         resultActions.andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
-                .andExpect(jsonPath("id").value(carDTO.getId()))
-                .andExpect(jsonPath("brand").value(carDTO.getBrand()))
-                .andExpect(jsonPath("licensePlate").value(carDTO.getLicensePlate()))
-                .andExpect(jsonPath("manufacturer").value(carDTO.getManufacturer()))
-                .andExpect(jsonPath("operationCity").value(carDTO.getOperationCity()))
-                .andExpect(jsonPath("status").value(carDTO.getStatus().name()));
+                .andExpect(jsonPath("id").value(carDTO.id()))
+                .andExpect(jsonPath("brand").value(carDTO.brand()))
+                .andExpect(jsonPath("licensePlate").value(carDTO.licensePlate()))
+                .andExpect(jsonPath("manufacturer").value(carDTO.manufacturer()))
+                .andExpect(jsonPath("operationCity").value(carDTO.operationCity()))
+                .andExpect(jsonPath("status").value(carDTO.status().name()));
     }
 
     @Test
@@ -99,11 +99,11 @@ public class CarControllerIntegrationTest {
         resultActions.andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(jsonPath("id").isNotEmpty())
-                .andExpect(jsonPath("brand").value(carDTO.getBrand()))
-                .andExpect(jsonPath("licensePlate").value(carDTO.getLicensePlate()))
-                .andExpect(jsonPath("manufacturer").value(carDTO.getManufacturer()))
-                .andExpect(jsonPath("operationCity").value(carDTO.getOperationCity()))
-                .andExpect(jsonPath("status").value(carDTO.getStatus().name()));
+                .andExpect(jsonPath("brand").value(carDTO.brand()))
+                .andExpect(jsonPath("licensePlate").value(carDTO.licensePlate()))
+                .andExpect(jsonPath("manufacturer").value(carDTO.manufacturer()))
+                .andExpect(jsonPath("operationCity").value(carDTO.operationCity()))
+                .andExpect(jsonPath("status").value(carDTO.status().name()));
     }
 
     @Test
@@ -152,22 +152,19 @@ public class CarControllerIntegrationTest {
         resultActions.andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(jsonPath("id").isNotEmpty())
-                .andExpect(jsonPath("brand").value(updatedCarRequest.getBrand()))
-                .andExpect(jsonPath("licensePlate").value(updatedCarRequest.getLicensePlate()))
-                .andExpect(jsonPath("manufacturer").value(updatedCarRequest.getManufacturer()))
-                .andExpect(jsonPath("operationCity").value(updatedCarRequest.getOperationCity()))
-                .andExpect(jsonPath("status").value(updatedCarRequest.getStatus().name()));
+                .andExpect(jsonPath("brand").value(updatedCarRequest.brand()))
+                .andExpect(jsonPath("licensePlate").value(updatedCarRequest.licensePlate()))
+                .andExpect(jsonPath("manufacturer").value(updatedCarRequest.manufacturer()))
+                .andExpect(jsonPath("operationCity").value(updatedCarRequest.operationCity()))
+                .andExpect(jsonPath("status").value(updatedCarRequest.status().name()));
     }
 
     @Test
     @SneakyThrows
     public void should_fail_to_update_car_with_an_existing_license_plate() {
         // given
-        var existingCar = givenMercedesCar();
         givenBmwCar();
-        var updateCarRequest = givenUpdatedCarDTO();
-        updateCarRequest.setLicensePlate(existingCar.getLicensePlate());
-        payload = toJSON(updateCarRequest);
+        givenUpdateWithExistingLicensePlate();
 
         // when
         whenACarIsUpdated();
@@ -227,6 +224,20 @@ public class CarControllerIntegrationTest {
         );
     }
 
+    private void givenUpdateWithExistingLicensePlate() {
+        var existingCar = givenMercedesCar();
+        var updateCarRequest = new CarDTO(
+                1L,
+                existingCar.licensePlate(),
+                "Mercedes",
+                "Daimler Motors Corporation",
+                "Berlin",
+                OUT_OF_SERVICE
+        );
+
+        payload = toJSON(updateCarRequest);
+    }
+
     @SneakyThrows
     private void whenCarsAreRetrieved() {
         resultActions = this.mockMvc.perform(get("/cars"))
@@ -250,14 +261,14 @@ public class CarControllerIntegrationTest {
     @SneakyThrows
     private void whenCarIsDeleted() {
         resultActions = this.mockMvc
-                .perform(delete("/cars/{id}", carDTO.getId()))
+                .perform(delete("/cars/{id}", carDTO.id()))
                 .andDo(print());
     }
 
     @SneakyThrows
     private void whenACarIsUpdated() {
         resultActions = this.mockMvc
-                .perform(put("/cars/{id}", carDTO.getId())
+                .perform(put("/cars/{id}", carDTO.id())
                         .content(payload)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print());
